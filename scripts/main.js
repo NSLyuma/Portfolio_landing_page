@@ -1,4 +1,3 @@
-//нахожу нужные элементы
 const menu = document.getElementById("menu");
 const nav = document.querySelector(".nav");
 const navMini = document.querySelector(".nav-mini");
@@ -10,49 +9,59 @@ const imgMini = document.querySelector(".header__img-mini");
 //медиа-запрос с шириной экрана <= 410px
 const mediaQuery = window.matchMedia("(max-width: 410px)");
 
-//если ширина экрана меньше 410px и у nav, lang и img нет класса hidden, этот класс добавляется
-if (mediaQuery.matches && !nav.classList.contains("hidden") && !lang.classList.contains("hidden") && !img.classList.contains("hidden")) {
-    nav.classList.add("hidden");
-    lang.classList.add("hidden");
-    img.classList.add("hidden");
+/**
+ * 
+ */
+class AddRemoveClass {
+    constructor(elem, mediaQuery, elemClass) {
+        this.elem = elem;
+        this.mediaQuery = window.matchMedia(`(max-width: ${mediaQuery}px)`);
+        this.elemClass = elemClass;
+    }
+    addClass() {
+        if (this.mediaQuery.matches && !this.elem.classList.contains(this.elemClass)) {
+            this.elem.classList.add(this.elemClass);
+        }
+        window.addEventListener("resize", () => {
+            if (this.mediaQuery.matches &&
+                !this.elem.classList.contains(this.elemClass)) {
+                this.elem.classList.add(this.elemClass);
+            } else if (!this.mediaQuery.matches &&
+                this.elem.classList.contains(this.elemClass)) {
+                this.elem.classList.remove(this.elemClass);
+            }
+        });
+    }
+    removeClass() {
+        if (this.mediaQuery.matches && this.elem.classList.contains(this.elemClass)) {
+            this.elem.classList.remove(this.elemClass);
+        }
+        window.addEventListener("resize", () => {
+            if (this.mediaQuery.matches &&
+                this.elem.classList.contains(this.elemClass)) {
+                this.elem.classList.remove(this.elemClass);
+            } else if (!this.mediaQuery.matches &&
+                !this.elem.classList.contains(this.elemClass)) {
+                this.elem.classList.add("hidden");
+            }
+        });
+    }
 }
 
-//если ширина экрана меньше 410px и у menu и imgMini есть класс hidden, этот класс убирается
-if (mediaQuery.matches && menu.classList.contains("hidden") && imgMini.classList.contains("hidden")) {
-    menu.classList.remove("hidden");
-    imgMini.classList.remove("hidden");
-}
+let navClass = new AddRemoveClass(nav, 410, "hidden");
+navClass.addClass();
 
-//при изменении размеров окна добавляется и убирается класс hidden для элементов nav, lang, menu и img
-window.addEventListener("resize", () => {
-    if (mediaQuery.matches &&
-        !nav.classList.contains("hidden") &&
-        !lang.classList.contains("hidden") &&
-        !img.classList.contains("hidden")) {
-        nav.classList.add("hidden");
-        lang.classList.add("hidden");
-        img.classList.add("hidden");
-    } else if (!mediaQuery.matches &&
-        nav.classList.contains("hidden") &&
-        lang.classList.contains("hidden") &&
-        img.classList.contains("hidden")) {
-        nav.classList.remove("hidden");
-        lang.classList.remove("hidden");
-        img.classList.remove("hidden");
-    }
+let langClass = new AddRemoveClass(lang, 410, "hidden");
+langClass.addClass();
 
-    if (mediaQuery.matches &&
-        menu.classList.contains("hidden") &&
-        imgMini.classList.contains("hidden")) {
-        menu.classList.remove("hidden");
-        imgMini.classList.remove("hidden");
-    } else if (!mediaQuery.matches &&
-        !menu.classList.contains("hidden") &&
-        !imgMini.classList.contains("hidden")) {
-        menu.classList.add("hidden");
-        imgMini.classList.add("hidden");
-    }
-});
+let imgClass = new AddRemoveClass(img, 410, "hidden");
+imgClass.addClass();
+
+let menuClass = new AddRemoveClass(menu, 410, "hidden");
+menuClass.removeClass();
+
+let imgMiniClass = new AddRemoveClass(imgMini, 410, "hidden");
+imgMiniClass.removeClass();
 
 //при клике на гамбургер появляется мини-меню
 menu.addEventListener("click", () => {
@@ -65,3 +74,14 @@ menu.addEventListener("click", () => {
 closeBtn.addEventListener("click", () => {
     navMini.classList.add("hidden");
 });
+
+const navMiniL = document.querySelector(".nav-mini__left");
+const links = navMiniL.querySelectorAll("a");
+console.log(links);
+
+//меню закрывается при клике на любую из ссылок
+links.forEach((link) => {
+    link.addEventListener("click", () => {
+        navMini.classList.add("hidden");
+    })
+})
